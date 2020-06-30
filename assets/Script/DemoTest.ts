@@ -6,7 +6,7 @@ export enum BarState {
 }
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class DemoTest extends cc.Component {
     @property(cc.Animation) private btn_HamburgerAnimation: cc.Animation = null;
     @property(cc.Node) private dark: cc.Node = null;
     @property(cc.Node) private scrollViewBar: cc.Node = null;
