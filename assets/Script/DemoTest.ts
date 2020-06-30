@@ -1,4 +1,6 @@
-const { ccclass, property } = cc._decorator;
+import RunNumberDemo from "./Mode/RunNumberDemo";
+
+const { ccclass, property, executeInEditMode } = cc._decorator;
 
 export enum BarState {
     Hide,
@@ -6,19 +8,42 @@ export enum BarState {
 }
 
 @ccclass
+@executeInEditMode
 export default class DemoTest extends cc.Component {
+    @property({ visible: function () { this.initRunNumberDemo(); return true; } }) private initial: boolean = false;
+    @property({ visible: function () { this.destroyRunNumberDemo(); return true; } }) private destroyer: boolean = false;
     @property(cc.Animation) private btn_HamburgerAnimation: cc.Animation = null;
     @property(cc.Node) private dark: cc.Node = null;
     @property(cc.Node) private scrollViewBar: cc.Node = null;
     @property(cc.Node) private fixedWindow: cc.Node = null;
+    @property(cc.Node) private rootPanel: cc.Node = null;
 
     private _barState: BarState = BarState.Hide;
     private _isBarMoving: boolean = false;
 
+    private _runNumberDemo: RunNumberDemo = new RunNumberDemo();
+
     start() {
+        if (CC_EDITOR) {
+            return;
+        }
         this.scrollViewBar.opacity = 0;
         this.fixedWindow.opacity = 255;
     }
+
+    private initRunNumberDemo() {
+        if (this.initial) {
+            this.initial = false;
+            this._runNumberDemo.initRunNumberDemo(this.rootPanel);
+        }
+    }
+    private destroyRunNumberDemo() {
+        if (this.destroyer) {
+            this.destroyer = false;
+            this.rootPanel.destroyAllChildren();
+        }
+    }
+
 
     public onScrollViewBarToggle() {
         if (this._isBarMoving) {
