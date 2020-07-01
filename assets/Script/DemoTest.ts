@@ -6,12 +6,15 @@ export enum BarState {
     Hide,
     Show
 }
+export enum DemoIndex {
+    RunNumber
+}
 
 @ccclass
 @executeInEditMode
 export default class DemoTest extends cc.Component {
-    @property({ visible: function () { this.initRunNumberDemo(); return true; } }) private initial: boolean = false;
-    @property({ visible: function () { this.destroyRunNumberDemo(); return true; } }) private destroyer: boolean = false;
+    // @property({ visible: function () { this.initRunNumberDemo(); return true; } }) private initial: boolean = false;
+    // @property({ visible: function () { this.destroyRunNumberDemo(); return true; } }) private destroyer: boolean = false;
     @property(cc.Animation) private btn_HamburgerAnimation: cc.Animation = null;
     @property(cc.Node) private dark: cc.Node = null;
     @property(cc.Node) private scrollViewBar: cc.Node = null;
@@ -21,7 +24,7 @@ export default class DemoTest extends cc.Component {
     private _barState: BarState = BarState.Hide;
     private _isBarMoving: boolean = false;
 
-    private _runNumberDemo: RunNumberDemo = new RunNumberDemo();
+    // private _runNumberDemo: RunNumberDemo = new RunNumberDemo();
 
     start() {
         if (CC_EDITOR) {
@@ -32,16 +35,16 @@ export default class DemoTest extends cc.Component {
     }
 
     private initRunNumberDemo() {
-        if (this.initial) {
-            this.initial = false;
-            this._runNumberDemo.initRunNumberDemo(this.rootPanel);
-        }
+        // if (this.initial) {
+        //     this.initial = false;
+        // }
     }
+
     private destroyRunNumberDemo() {
-        if (this.destroyer) {
-            this.destroyer = false;
-            this.rootPanel.destroyAllChildren();
-        }
+        // if (this.destroyer) {
+        //     this.destroyer = false;
+        //     this.rootPanel.destroyAllChildren();
+        // }
     }
 
 
@@ -54,9 +57,11 @@ export default class DemoTest extends cc.Component {
         this._isBarMoving = true;
         switch (this._barState) {
             case BarState.Hide:
-                _action.push(cc.callFunc(() => { this.scrollViewBar.opacity = 255; }));
+                _action.push(cc.callFunc(() => { this.dark.active = true; }));
+                _action.push(cc.callFunc(() => { this.scrollViewBar.opacity = 255; }))
+                _action.push(cc.callFunc(() => { this.scrollViewBar.getComponent(cc.ScrollView).scrollToTop(); }));
                 _action.push(cc.callFunc(() => { this.btn_HamburgerAnimation.play("buttonAnimation"); }));
-                _action.push(cc.callFunc(() => { this.dark.runAction(cc.fadeTo(0.35, 135)); }));
+                _action.push(cc.callFunc(() => { this.dark.runAction(cc.fadeTo(0.35, 175)); }));
                 _action.push(cc.moveTo(0.35, cc.v2(-540, -25)).easing(cc.easeBackOut()));
                 _action.push(cc.delayTime(0.35));
                 _action.push(cc.callFunc(() => { this._barState = BarState.Show; }));
@@ -69,6 +74,7 @@ export default class DemoTest extends cc.Component {
                 _action.push(cc.delayTime(0.35));
                 _action.push(cc.callFunc(() => { this._barState = BarState.Hide; }));
                 _action.push(cc.callFunc(() => { this.scrollViewBar.opacity = 0; }));
+                _action.push(cc.callFunc(() => { this.dark.active = false; }));
                 _action.push(cc.callFunc(() => { this._isBarMoving = false; }));
                 break;
             default:
@@ -81,5 +87,9 @@ export default class DemoTest extends cc.Component {
         if (this._barState == BarState.Show) {
             this.onScrollViewBarToggle();
         }
+    }
+
+    private showDemo(event, demo: DemoIndex) {
+
     }
 }
